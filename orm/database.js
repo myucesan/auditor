@@ -6,12 +6,12 @@ module.exports = {
         const sequelize = new Sequelize(database_name, database_user, database_password, {
             host: database_host,
             dialect: 'mysql',
-            logging: true,
+            // logging: true,
         });
         return sequelize;
     },
     shipRequestModel: function() {
-        const shipRequestsModel = this.manager().define('ShipRequests', {
+        let shipRequestsModel = this.manager().define('ShipRequests', {
             ship: {
                 type: Sequelize.STRING,
                 allowNull: false
@@ -47,6 +47,7 @@ module.exports = {
         return shipRequestsModel;
     },
     addShipRequest: async function (srShip, srAmount, srBlueprint, srPilot, srPilot_id, srPayment) {
+        console.log(123)
         try {
             const request = await this.shipRequestModel().create({
                 ship: srShip,
@@ -61,8 +62,12 @@ module.exports = {
         }
 
     },
-    getShipRequests: function () {
-
+    getShipRequests: async function () {
+        try {
+            return await this.shipRequestModel().findAll();
+        } catch(e) {
+            console.log("Error is:" +e);
+        }
     }
 }
 
