@@ -8,7 +8,8 @@ module.exports = {
             '- Corp player accounts - request the amount of debt or credit you have at the corp\n' +
             '- Members can pass skills \n' +
             '- Pricecheck\n' +
-            '' +
+            '- Ask for buyback percentage' +
+            '\n' +
             'Statistics:\n\n' +
             '- Monthly reports\n' +
             '- Predict usage\n');

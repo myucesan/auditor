@@ -21,7 +21,7 @@ module.exports = {
             let msg = ``;
             database.getShipRequests().then(function (result) {
 
-                console.log(result.map(e => message.channel.send(`@${e.pilot} \nShip: ${e.ship} \nAmount: ${e.amount}\nBlueprint: ${e.blueprint}\nPayment: ${e.payment}\n\n`)));
+                console.log(result.map(e => message.channel.send(`\`\`\`@${e.pilot} \nShip: ${e.ship} \nAmount: ${e.amount}\nBlueprint: ${e.blueprint}\nPayment: ${e.payment}\n\n\`\`\``)));
 
             }).catch(function (error) {
                 console.log(error);

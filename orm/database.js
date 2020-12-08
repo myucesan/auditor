@@ -64,7 +64,7 @@ module.exports = {
     },
     getShipRequests: async function () {
         try {
-            return await this.shipRequestModel().findAll();
+            return await this.shipRequestModel().findAll({where: {status: "pending"}});
         } catch(e) {
             console.log("Error is:" +e);
         }
