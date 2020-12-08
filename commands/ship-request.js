@@ -19,15 +19,43 @@ module.exports = {
 
         } else if (args[0] === "list") {
             let msg = ``;
-            database.getShipRequests().then(function (result) {
 
-                console.log(result.map(e => message.channel.send(`\`\`\`@${e.pilot} \nShip: ${e.ship} \nAmount: ${e.amount}\nBlueprint: ${e.blueprint}\nPayment: ${e.payment}\n\n\`\`\``)));
+                if (args[1] === "complete") {
+                    database.getShipRequests("complete").then(function (result) {
 
-            }).catch(function (error) {
-                console.log(error);
-            })
-            // const shipRequests = Promise.resolve(database.getShipRequests());
-            // message.channel.send(shipRequests);
+                        console.log(result.map(e => message.channel.send(`\`\`\`ID: ${e.id}\n@${e.pilot} \nShip: ${e.ship} \nAmount: ${e.amount}\nBlueprint: ${e.blueprint}\nPayment: ${e.payment}\nStatus: ${e.status}\n\`\`\``)));
+
+                    }).catch(function (error) {
+                        console.log(error);
+                    })
+                } else {
+                    database.getShipRequests().then(function (result) {
+
+                        console.log(result.map(e => message.channel.send(`\`\`\`ID: ${e.id}\n@${e.pilot} \nShip: ${e.ship} \nAmount: ${e.amount}\nBlueprint: ${e.blueprint}\nPayment: ${e.payment}\nStatus: ${e.status}\n\`\`\``)));
+
+                    }).catch(function (error) {
+                        console.log(error);
+                    })
+
+                }
+        } else if (args[0] === "manage") {
+            // check authorisation
+            if (message.member.roles.cache.some(r => ["Auditor's Boss"].includes(r.name))) {
+                message.channel.send("**You are authorised**\n\n");
+                if (!isNaN(args[1])) {
+                    // args[1] should be id and args 2 should be operation
+                    let manageId = args[1];
+                    console.log(manageId);
+                    if (args[2] === "status") {
+                        let status = args[3];
+                        console.log(status);
+                        await database.updateShipRequest(manageId, "status", status);
+                    }
+                }
+            } else {
+                message.channel.send("**You are unauthorised**\n\n");
+
+            }
         } else {
             if (args.length !== 4) {
                 message.channel.send("Incorrect amount of arguments.")

@@ -62,12 +62,22 @@ module.exports = {
         }
 
     },
-    getShipRequests: async function () {
+    getShipRequests: async function (status = "pending") {
         try {
-            return await this.shipRequestModel().findAll({where: {status: "pending"}});
+            return await this.shipRequestModel().findAll({where: {status: status}});
         } catch(e) {
             console.log("Error is:" +e);
         }
-    }
+    },
+    updateShipRequest: async function(id, what="status", value) {
+        if (what === "status") {
+            try {
+                const affectedRows = await this.shipRequestModel().update({status: value}, { where: {id: id}})
+            } catch(e) {
+                console.log("Error is:" + e);
+            }
+        }
+
+     }
 }
 
