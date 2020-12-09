@@ -170,14 +170,41 @@ module.exports = {
             if (err) return getNewToken(oAuth2Client, callback);
             oAuth2Client.setCredentials(JSON.parse(token));
             callback(oAuth2Client);
+            // return oAuth2Client;
+
+
         });
     },
-    readCredentials(shipName) {
+    readCredentials(callback) {
         fs.readFile('credentials.json', (err, content) => {
             if (err) return console.log('Error loading client secret file:', err);
             // Authorize a client with credentials, then call the Google Sheets API.
-            module.exports.authorize(JSON.parse(content), module.exports.lol);
+            // callback(this.authorize(JSON.parse(content)));
+            this.authorize(JSON.parse(content), () => {
+                callback("heyaheyahyea");
+            })
 
         });
+    },
+    getAuth(auth) {
+        console.log("Brother");
+        console.log(auth);
+        const auths = auth;
+        return auths;
     }
 }
+
+// this.authorize(JSON.parse(content), () => {
+//     callback()
+// })
+
+
+//    async readCredentials(shipName) {
+//         // using fs.promises
+//         return fs.readFile('credentials.json')
+//           .then(content => {
+//               // I would avoid using module.exports that's real confusing
+//               this.auth = module.exports.authorize(JSON.parse(content));
+//           })
+//           .catch(err => console.log('Error loading client secret file:', err))
+//     }
