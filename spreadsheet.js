@@ -119,9 +119,22 @@ module.exports = {
             return sheets.spreadsheets.values.batchGet({spreadsheetId, ranges,});
 
 
-    }
+    }, getCorpPlayerAccount(auth) {
+        const sheets = google.sheets({version: 'v4', auth});
+        let spreadsheetId = '1CIAmCZTy6TYM2ZHyYeubA00-DWStKXNhay5Sm0xdpvA';
+        let ranges = [
+            'EVO Player Credits!B5:E27'
+        ];
+        return sheets.spreadsheets.values.batchGet({spreadsheetId, ranges,});
+    }, getStock(auth) {
+        const sheets = google.sheets({version: 'v4', auth});
+        let spreadsheetId = '1CIAmCZTy6TYM2ZHyYeubA00-DWStKXNhay5Sm0xdpvA';
+        let ranges = [
+            'Mineral Status!B9:D16'
+        ];
+        return sheets.spreadsheets.values.batchGet({spreadsheetId, ranges,});
+    },
 
-    ,
     authorize(credentials, callback) {
         const {client_secret, client_id, redirect_uris} = credentials.installed;
         const oAuth2Client = new google.auth.OAuth2(

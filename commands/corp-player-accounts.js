@@ -2,11 +2,9 @@ const ss = require("../spreadsheet");
 const credentials = require('../credentials.json');
 const token = require('../token.json');
 const {google} = require('googleapis');
-
 module.exports = {
-
-    name: 'stock',
-    description: 'Shows stock',
+    name: 'corp-player-accounts',
+    description: 'Prints corp-player-accounts',
     execute(message, args) {
         const {client_secret, client_id, redirect_uris} = credentials.installed;
         let creds = {
@@ -20,14 +18,14 @@ module.exports = {
         const oAuth2Client = new google.auth.OAuth2(
             client_id, client_secret, redirect_uris[0]);
         oAuth2Client.setCredentials(creds);
-        ss.getStock(oAuth2Client).then(result => {
+        ss.getCorpPlayerAccount(oAuth2Client).then(result => {
             console.log(`${result.data.valueRanges.length} ranges retrieved.`);
             const rows = result.data.valueRanges;
             if (rows.length) {
                 rows.map((row => {
                     // console.log("----------------");
                     row.values.forEach(player => {
-                        message.channel.send(`**Mineral: ${player[0]}** | Total Stock: ${player[1]} | Required Amount: ${player[2]}\n`);
+                        message.channel.send(`**Member: ${player[0]}** | Position: ${player[1]} | Account Balance: ${player[2]} | Notes: ${player[3]}\n`);
                     });
                 }))
             }
@@ -35,5 +33,4 @@ module.exports = {
         }).catch(error => {
             console.log(error);
         });
-    },
-};
+    }}
