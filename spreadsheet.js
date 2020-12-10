@@ -13,7 +13,7 @@ const TOKEN_PATH = 'token.json';
 fs.readFile('credentials.json', (err, content) => {
     if (err) return console.log('Error loading client secret file:', err);
     // Authorize a client with credentials, then call the Google Sheets API.
-    module.exports.authorize(JSON.parse(content), module.exports.lol);
+    module.exports.authorize(JSON.parse(content), module.exports.getShipsWithPrice);
 });
 
 // /**
@@ -104,7 +104,7 @@ function getShipNamesWithPrices(auth) {
     });
 }
 module.exports = {
-    lol: function(auth=auth, shippings = "Vigilant") {
+    getShipsWithPrice: function(auth=auth, shippings = "Vigilant") {
         const sheets = google.sheets({version: 'v4', auth});
         let spreadsheetId = '1VNUfGdSPF6dqvcFwFMP8iS_oajD5728JzufZ33UpA88';
         let ranges = [
@@ -116,50 +116,12 @@ module.exports = {
             'EVO1 Ship List!B92:F102', // industrials
 
         ];
-        if (shippings != null) {
-            sheets.spreadsheets.values.batchGet({
-                spreadsheetId,
-                ranges,
-            }, (err, result) => {
-
-                if (err) {
-                    // Handle error
-                    console.log(err);
-                } else {
-                    console.log(`${result.data.valueRanges.length} ranges retrieved.`);
-                    const rows = result.data.valueRanges;
-
-                    if (rows.length) {
-                        rows.map((row => {
-                            // console.log("----------------");
-                            row.values.forEach(ship => {
-                                if (ship.length !== 0) {
-                                    let lo = new Set();
-                                    let shipName = ship[0].replace(/[*^]+/, '');
-                                    if (shipName === shippings) {
-                                        lo.add(shipName);
-                                        lo.add(ship[1]);
-                                        lo.add(ship[2]);
-                                        lo.add(ship[3]);
-                                        lo.add(ship[4]);
-
-                                        return lo;
+            return sheets.spreadsheets.values.batchGet({spreadsheetId, ranges,});
 
 
-                                    }
-                                }
+    }
 
-                            });
-                        }))
-                    }
-                }
-            });
-        } else {
-            console.log("Ship is null");
-            return null;
-        }
-
-    },
+    ,
     authorize(credentials, callback) {
         const {client_secret, client_id, redirect_uris} = credentials.installed;
         const oAuth2Client = new google.auth.OAuth2(

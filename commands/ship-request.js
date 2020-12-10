@@ -58,8 +58,9 @@ module.exports = {
             }
         } else {
             if (args.length !== 4) {
-                message.channel.send("Incorrect amount of arguments.")
+                message.channel.send("Incorrect amount of arguments. Usage:\n !ship-request [Ship] [Amount] BP(yes/no] Payment[credit/donate]\n!ship-request list\n!!ship-request-list complete")
             } else {
+
                 message.channel.send(`@${message.author.username}\nShip: ${args[0]}\nAmount: ${args[1]}\nBlueprint: ${args[2]}\nPayment method: ${args[3]}`)
                 const authorId = message.author.id;
                 const authorUsername = message.author.username;
