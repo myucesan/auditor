@@ -7,7 +7,9 @@ module.exports = {
 
     name: 'price-check',
     description: 'Shows the price of a ship.',
+    aliases: ['pc'],
     execute(message, args) {
+        message.react('👀');
         const {client_secret, client_id, redirect_uris} = credentials.installed;
         let creds = {access_token:token.access_token, refresh_token:token.refresh_token, scope:token.scope, token_type:token.token_type, expiry_date:token.expiry_date};
 
@@ -15,7 +17,7 @@ module.exports = {
             client_id, client_secret, redirect_uris[0]);
         oAuth2Client.setCredentials(creds);
 
-        if (args.length != 1) {
+        if (args.length !== 1) {
             message.channel.send(`Incorrect usage: format:\n!price-check [ship] \nEx:!price-check Vigilant`);
         } else {
             ss.getShipsWithPrice(oAuth2Client).then(result => {

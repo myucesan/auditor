@@ -5,6 +5,7 @@ let i =0;
 module.exports = {
     name: 'ship-request',
     description: 'Puts in a ship request.',
+    aliases: ['sr'],
     async execute(message, args) {
         // args: shipname amount bp:yes/no payment:cc/donate/additional notes
 
@@ -20,24 +21,24 @@ module.exports = {
         } else if (args[0] === "list") {
             let msg = ``;
 
-                if (args[1] === "complete") {
-                    database.getShipRequests("complete").then(function (result) {
+            if (args[1] === "complete") {
+                database.getShipRequests("complete").then(function (result) {
 
-                        console.log(result.map(e => message.channel.send(`\`\`\`ID: ${e.id}\n@${e.pilot} \nShip: ${e.ship} \nAmount: ${e.amount}\nBlueprint: ${e.blueprint}\nPayment: ${e.payment}\nStatus: ${e.status}\n\`\`\``)));
+                    console.log(result.map(e => message.channel.send(`\`\`\`ID: ${e.id}\n@${e.pilot} \nShip: ${e.ship} \nAmount: ${e.amount}\nBlueprint: ${e.blueprint}\nPayment: ${e.payment}\nStatus: ${e.status}\n\`\`\``)));
 
-                    }).catch(function (error) {
-                        console.log(error);
-                    })
-                } else {
-                    database.getShipRequests().then(function (result) {
+                }).catch(function (error) {
+                    console.log(error);
+                })
+            } else {
+                database.getShipRequests().then(function (result) {
 
-                        console.log(result.map(e => message.channel.send(`\`\`\`ID: ${e.id}\n@${e.pilot} \nShip: ${e.ship} \nAmount: ${e.amount}\nBlueprint: ${e.blueprint}\nPayment: ${e.payment}\nStatus: ${e.status}\n\`\`\``)));
+                    console.log(result.map(e => message.channel.send(`\`\`\`ID: ${e.id}\n@${e.pilot} \nShip: ${e.ship} \nAmount: ${e.amount}\nBlueprint: ${e.blueprint}\nPayment: ${e.payment}\nStatus: ${e.status}\n\`\`\``)));
 
-                    }).catch(function (error) {
-                        console.log(error);
-                    })
+                }).catch(function (error) {
+                    console.log(error);
+                })
 
-                }
+            }
         } else if (args[0] === "manage") {
             // check authorisation
             if (message.member.roles.cache.some(r => ["Auditor's Boss"].includes(r.name))) {
@@ -66,7 +67,6 @@ module.exports = {
                 const authorUsername = message.author.username;
                 console.log(i);
                 database.addShipRequest(args[0], args[1], args[2], authorUsername, authorId, args[3])
-                message.channel.send(errorMessage[Symbol.toStringTag])
                 // database.shipRequestModel().sync();
             }
 

@@ -5,7 +5,9 @@ const {google} = require('googleapis');
 module.exports = {
     name: 'corp-player-accounts',
     description: 'Prints corp-player-accounts',
+    aliases: ['cpa'],
     execute(message, args) {
+        message.react('👀');
         const {client_secret, client_id, redirect_uris} = credentials.installed;
         let creds = {
             access_token: token.access_token,
@@ -22,12 +24,14 @@ module.exports = {
             console.log(`${result.data.valueRanges.length} ranges retrieved.`);
             const rows = result.data.valueRanges;
             if (rows.length) {
+                let str = ""
                 rows.map((row => {
                     // console.log("----------------");
                     row.values.forEach(player => {
-                        message.channel.send(`**Member: ${player[0]}** | Position: ${player[1]} | Account Balance: ${player[2]} | Notes: ${player[3]}\n`);
+                        str += `**Member: ${player[0]}** | Position: ${player[1]} | Account Balance: ${player[2]} | Notes: ${player[3]}\n`
                     });
                 }))
+                message.channel.send(str);
             }
 
         }).catch(error => {

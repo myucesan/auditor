@@ -7,6 +7,7 @@ module.exports = {
 
     name: 'stock',
     description: 'Shows stock',
+    aliases: [],
     execute(message, args) {
         const {client_secret, client_id, redirect_uris} = credentials.installed;
         let creds = {

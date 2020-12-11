@@ -1,8 +1,10 @@
 module.exports = {
     name: 'boss',
     description: 'Tells who has industry privilege over Auditor.',
+    aliases: [],
     execute(message, args) {
         // 785652854902882334 boss
+        message.react('👀');
         let userRole = message.guild.roles.cache.find(role => role.name === "Auditor's Boss")
         let membersWithRole = message.guild.roles.cache.get(userRole.id).members;
         if (message.member.roles.cache.has(userRole.id)) {

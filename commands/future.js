@@ -1,7 +1,8 @@
 module.exports = {
     name: 'future',
     description: 'Auditor will tell about the future plans of him.',
-    execute(message, args) {
+    aliases: [],
+        execute(message, args) {
         message.channel.send('**Emboldened** features are features that are already quite mature or finished and the *italic ones* are currently being worked on.\n\n' +
             '- *Ship requests management*\n' +
             '- Industry Inventory (know the corp mineral/PI stocks)\n' +
