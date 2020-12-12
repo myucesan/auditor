@@ -16,11 +16,6 @@ module.exports = {
                 type: Sequelize.STRING,
                 allowNull: false
             },
-            amount: {
-                type: Sequelize.INTEGER,
-                defaultValue: 1,
-                allowNull: false
-            },
             blueprint: {
                 type: Sequelize.BOOLEAN,
                 defaultValue: false,
@@ -41,17 +36,20 @@ module.exports = {
             status: {
                 type: Sequelize.STRING,
                 defaultValue: "Pending"
+            },
+            notes: {
+                type: Sequelize.STRING,
+                allowNull: true
             }
         });
 
         return shipRequestsModel;
     },
-    addShipRequest: async function (srShip, srAmount, srBlueprint, srPilot, srPilot_id, srPayment) {
+    addShipRequest: async function (srShip, srBlueprint, srPilot, srPilot_id, srPayment) {
         console.log(123)
         try {
             const request = await this.shipRequestModel().create({
                 ship: srShip,
-                amount: srAmount,
                 blueprint: srBlueprint,
                 pilot: srPilot,
                 pilot_id: srPilot_id,

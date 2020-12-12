@@ -116,7 +116,7 @@ module.exports = {
             'EVO1 Ship List!B92:F102', // industrials
 
         ];
-            return sheets.spreadsheets.values.batchGet({spreadsheetId, ranges,});
+            return sheets.spreadsheets.values.batchGet({spreadsheetId, ranges});
 
 
     }, getCorpPlayerAccount(auth) {
