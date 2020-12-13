@@ -85,6 +85,12 @@ module.exports = {
             } catch(e) {
                 console.log("Error is:" + e);
             }
+        } else if (what === "notes") {
+            try {
+                const affectedRows = await this.shipRequestModel().update({notes: value}, { where: {id: id}})
+            } catch(e) {
+                console.log("Error is:" + e);
+            }
         }
 
      }
