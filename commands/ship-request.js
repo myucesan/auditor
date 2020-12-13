@@ -137,9 +137,7 @@ module.exports = {
 
 
                                 result.map(e => {
-                                    console.log(`\`\`\`✅ ID: ${e.id} | @${e.pilot} | Ship: ${e.ship} | Blueprint: ${e.blueprint} | Payment: ${e.payment}| Status: ${e.status}\n\`\`\``);
                                     const user = message.guild.members.cache.get(e.pilot_id);
-                                    user.send(`Your order of "${e.ship}" has been contracted to you. Please accept as soon as possible so we can complete the order. You chose to pay by ${e.payment}.`);
                                     contractedOrder = contractedOrder
                                         .setFooter(`Ordered at: ${e.createdAt}`)
                                         .addField("Ship", e.ship, true)
