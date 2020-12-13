@@ -81,7 +81,7 @@ module.exports = {
                                 statusEmoji = '🚫';
                                 break;
                         }
-                        msg += `${statusEmoji}\`${e.id}\` - @${e.pilot} - ${e.ship} | Payment: ${e.payment}| Status: ${e.status}| ${e.blueprint ? '**Blueprint supplied**' : ''}\n`;
+                        msg += `${statusEmoji}\`${e.id}\` - @${e.pilot} - ${e.ship} | ${e.payment} | _${e.status}_ | ${e.blueprint ? '**BP**' : ''}\n`;
                     });
 
 
@@ -172,6 +172,7 @@ module.exports = {
                     args[2] = args[2][0].toUpperCase() + args[2].substring(1)
                 }
 
+                console.log(searchResultLen);
                 if (searchResultLen > 1) {
                     message.channel.send(">>> The ship name input has multiple matches, I chose the best one for you but in case it's wrong ask the industry officers to cancel it.");
                 }

@@ -1,6 +1,8 @@
 const sequelize = require("sequelize");
 const {Sequelize} = require("sequelize");
 const { database_name, database_user, database_password, database_host } = require('../config.json')
+const dfns = require("date-fns")
+const eoLocale = require('date-fns/locale/eo')
 
 module.exports = {
     manager: function() {
@@ -74,6 +76,29 @@ module.exports = {
     }, getShipRequests: async function (status = "completed") {
         try {
             return await this.shipRequestModel().findAll({where: {status: "completed"}});
+        } catch(e) {
+            console.log("Error is:" +e);
+        }
+    }, getTodaysShipRequests: async function () {
+        // TODO: fix dates
+        let day = new Date();
+        let startDay = dfns.setHours(day, 1);
+        startDay = dfns.setMinutes(startDay, 0);
+        startDay = dfns.setMilliseconds(startDay, 0);
+        let endDay = dfns.setHours(day, 0);
+        endDay = dfns.setMinutes(endDay, 59);
+        endDay = dfns.setMilliseconds(endDay, 999);
+
+        startDay = dfns.format(startDay, 'yyyy-MM-dd hh:mm:ss', );
+        endDay = dfns.format(endDay, 'yyyy-MM-dd hh:mm:ss');
+
+
+        console.log(startDay);
+        console.log(endDay);
+        try {
+            return await this.shipRequestModel().findAll({where: {createdAt: {
+                [sequelize.Op.gt]: '2020-12-13 00:00:00',
+                [sequelize.Op.lt]: '2020-12-13 22:59:59'}}});
         } catch(e) {
             console.log("Error is:" +e);
         }

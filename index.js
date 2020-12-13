@@ -1,6 +1,9 @@
 const fs = require('fs');
 const Discord = require('discord.js');
 const { prefix, token } = require('./config.json');
+const cron = require('cron');
+const database = require("./orm/database.js");
+
 
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
@@ -14,10 +17,30 @@ for (const file of commandFiles) {
 
 const cooldowns = new Discord.Collection();
 
+// cron jobs
+async function dailyShipRequestOrders() {
+    let channel = client.channels.cache.get("786281834127818842");
+    let msg = '**Todays orders until UTC 16:00**\n\n';
+    channel.send(msg);
+
+    await database.getTodaysShipRequests().then(result => {
+        result.map(e => {
+            channel.send(`✅ ID: ${e.id} | @${e.pilot} | Ship: ${e.ship} | Blueprint: ${e.blueprint} | Payment: ${e.payment}| Status: ${e.status}\n`);
+        })
+
+    })
+
+
+}
+// 0 16 * * *
+let job = new cron.CronJob('0 16 * * *', dailyShipRequestOrders, null, true, 'Europe/Amsterdam');
+
+
 client.once('ready', () => {
     console.log('Ready!');
-});
+    job.start();
 
+});
 client.on('message', message => {
     if (!message.content.startsWith(prefix) || message.author.bot) return;
 
