@@ -118,6 +118,12 @@ module.exports = {
             }
         }
 
-     }
+     }, getUserByShipRequestID: async function(id) {
+            try {
+                return await this.shipRequestModel().findAll({where: {id: id}});
+            } catch(e) {
+                console.log("Error is:" + e);
+            }
+    }
 }
 

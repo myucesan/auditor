@@ -4,6 +4,7 @@ const credentials = require('../credentials.json');
 const token = require('../token.json');
 const {google} = require('googleapis');
 const Fuse = require('fuse.js')
+const Discord = require('discord.js');
 
 module.exports = {
     name: 'ship-request',
@@ -44,7 +45,8 @@ module.exports = {
                 "BP : Yes / No\n" +
                 "Payment: Corp Credit / Isks (donation) / Additional notes");
 
-        } else if (args[0] === "list") {
+        }
+        else if (args[0] === "list") {
             let msg = ``;
             let statusEmoji = '';
             if (args[1] === undefined) {args[1] = "undefined"}
@@ -91,7 +93,8 @@ module.exports = {
                 message.channel.send(msg);
 
             }
-        } else if (args[0] === "manage") {
+        }
+        else if (args[0] === "manage") {
             // check authorisation
             if (message.member.roles.cache.some(r => ["Auditor's Boss"].includes(r.name))) {
                 let managedIds = args[1].split(',').map(id=> +id);
@@ -123,6 +126,33 @@ module.exports = {
                                 status = "Pending";
                                 break;
                         }
+
+                        managedIds.forEach(id => {
+                                let contractedOrder = new Discord.MessageEmbed()
+                                    .setColor('#0099ff')
+                                    .setTitle('Congratulations, your order has been contracted!')
+                                    .setAuthor('Semarin')
+                                    .setImage("https://cdn.discordapp.com/attachments/766158782286921738/787414543545532426/image0.jpg")
+                            database.getUserByShipRequestID(id).then(function (result) {
+
+
+                                result.map(e => {
+                                    console.log(`\`\`\`✅ ID: ${e.id} | @${e.pilot} | Ship: ${e.ship} | Blueprint: ${e.blueprint} | Payment: ${e.payment}| Status: ${e.status}\n\`\`\``);
+                                    const user = message.guild.members.cache.get(e.pilot_id);
+                                    user.send(`Your order of "${e.ship}" has been contracted to you. Please accept as soon as possible so we can complete the order. You chose to pay by ${e.payment}.`);
+                                    contractedOrder = contractedOrder
+                                        .setFooter(`Ordered at: ${e.createdAt}`)
+                                        .addField("Ship", e.ship, true)
+                                        .addField("Price", 'Contact Industry', true)
+                                        .addField("Payment method:", e.payment, true)
+                                    user.send(contractedOrder);
+                                });
+
+                            }).catch(function (error) {
+                                console.log(error);
+                            })
+                        }
+                        )
                         managedIds.forEach(id => {
                             database.updateShipRequest(id, "status", status)
                         } );
@@ -135,9 +165,9 @@ module.exports = {
                         } );
                     }
                 }
-            } else {
+            }
+            else {
                 message.channel.send("**You are unauthorised**\n\n");
-
             }
         } else {
             if (args.length !== 3) {
@@ -190,3 +220,4 @@ module.exports = {
         }
     }
 };
+
