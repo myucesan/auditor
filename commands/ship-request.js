@@ -68,10 +68,10 @@ module.exports = {
                             case "pending":
                                 statusEmoji = '⚒️';
                                 break;
-                            case "inproduction":
+                            case "in production":
                                 statusEmoji = '⏳';
                                 break;
-                            case "cap":
+                            case "contracted":
                                 statusEmoji = '📧';
                                 break;
                             case "completed":
@@ -80,9 +80,8 @@ module.exports = {
                             case "cancelled":
                                 statusEmoji = '🚫';
                                 break;
-
                         }
-                        msg += `${statusEmoji}\`${e.id}\` - @${e.pilot} - ${e.ship} | Payment: ${e.payment}| Status: ${e.status}\n`;
+                        msg += `${statusEmoji}\`${e.id}\` - @${e.pilot} - ${e.ship} | Payment: ${e.payment}| Status: ${e.status}| ${e.blueprint ? '**Blueprint supplied**' : ''}\n`;
                     });
 
 
@@ -137,7 +136,7 @@ module.exports = {
                 const fuse = new Fuse(shipNames, {
                     keys: ['name']
                 })
-
+                let booleanStatus = "";
                 let search = fuse.search(args[0]);
                 let searchResultLen = search.length;
                 if (searchResultLen !== 0) {
@@ -147,19 +146,28 @@ module.exports = {
                 if (!(args[1].toLowerCase() === "no" || args[1].toLowerCase() === "n" || args[1].toLowerCase() === "yes" || args[1].toLowerCase() === "y")) {
                     message.channel.send(">>> Blueprint defaults to 'no' because of invalid input");
                     args[1] = false;
-                } else {
+
+                } else if (args[1] === "no" || args[1] === "y") {
+                    args[1] = false;
+                    booleanStatus = "No";
+                } else if (args[1] === "yes" || args[1] === "y") {
                     args[1] = true;
+                    booleanStatus = "Yes";
                 }
 
                 if (!(args[2].toLowerCase() === "credit" || args[2].toLowerCase() === "donate" || args[2].toLowerCase() === "srp")) {
                     message.channel.send(">>> Payment method defaults to 'donate' because of invalid input");
                     args[2] = "Donate";
+                } else {
+                    args[2] = args[2][0].toUpperCase() + args[2].substring(1)
                 }
 
                 if (searchResultLen > 1) {
                     message.channel.send(">>> The ship name input has multiple matches, I chose the best one for you but in case it's wrong ask the industry officers to cancel it.");
                 }
-                message.channel.send(`@${message.author.username}\nShip: ${args[0]}\nBlueprint: ${args[1]}\nPayment method: ${args[2]}`)
+
+
+                message.channel.send(`@${message.author.username}\nShip: ${args[0]}\nBlueprint: ${booleanStatus}\nPayment method: ${args[2]}`)
                 const authorId = message.author.id;
                 const authorUsername = message.author.username;
                 database.addShipRequest(args[0], args[1], authorUsername, authorId, args[2])
