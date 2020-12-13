@@ -47,7 +47,8 @@ module.exports = {
         } else if (args[0] === "list") {
             let msg = ``;
             let statusEmoji = '';
-            if (args[1] === "completed") {
+            if (args[1] === undefined) {args[1] = "undefined"}
+            if (args[1].toString().toLowerCase() === "completed") {
                 await database.getShipRequests("completed").then(function (result) {
 
                     console.log(result.map(e => {
@@ -61,7 +62,6 @@ module.exports = {
             } else {
 
                 await database.getOngoingShipRequests().then(function (result) {
-
 
                     result.map(e => {
                         switch (e.status.toLowerCase()) {
@@ -82,7 +82,7 @@ module.exports = {
                                 break;
 
                         }
-                        msg += `\`\`\`${statusEmoji} ID: ${e.id} | @${e.pilot} | Ship: ${e.ship} | Blueprint: ${e.blueprint} | Payment: ${e.payment}| Status: ${e.status}\n\`\`\``;
+                        msg += `${statusEmoji}\`${e.id}\` - @${e.pilot} - ${e.ship} | Payment: ${e.payment}| Status: ${e.status}\n`;
                     });
 
 
@@ -99,10 +99,30 @@ module.exports = {
                 if (!isNaN(args[1])) {
                     // args[1] should be id and args 2 should be operation
                     let manageId = args[1];
-                    console.log(manageId);
-                    if (args[2] === "status") {
+                    let manageArgumenet = args[2];
+                    if (manageArgumenet === "status") {
                         let status = args[3];
-                        console.log(status);
+                        switch (status.toLowerCase()) {
+                            case "pending":
+                                status = "Pending";
+                                break;
+                            case "inproduction":
+                                status = "In production";
+                                break;
+                            case "cap":
+                                status = "Contracted";
+                                break;
+                            case "completed":
+                                status = "Completed";
+                                break;
+                            case "cancelled":
+                                status = "Cancelled";
+                                break;
+                            default:
+                                message.channel.send("Invalid status, resetting to status: Pending.")
+                                status = "Pending";
+                                break;
+                        }
                         await database.updateShipRequest(manageId, "status", status);
                     }
                 }

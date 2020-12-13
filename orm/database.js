@@ -22,6 +22,10 @@ module.exports = {
                 defaultValue: false,
                 allowNull: false
             },
+            price: {
+                type: Sequelize.FLOAT,
+                allowNull : true
+            },
             pilot: {
                 type: Sequelize.STRING,
                 allowNull: false
