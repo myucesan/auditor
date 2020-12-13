@@ -1,3 +1,4 @@
+const sequelize = require("sequelize");
 const {Sequelize} = require("sequelize");
 const { database_name, database_user, database_password, database_host } = require('../config.json')
 
@@ -60,9 +61,15 @@ module.exports = {
         }
 
     },
-    getShipRequests: async function (status = "pending") {
+    getOngoingShipRequests: async function () {
         try {
-            return await this.shipRequestModel().findAll({where: {status: status}});
+            return await this.shipRequestModel().findAll({where: {status:{[sequelize.Op.not]: "completed"} }});
+        } catch(e) {
+            console.log("Error is:" +e);
+        }
+    }, getShipRequests: async function (status = "completed") {
+        try {
+            return await this.shipRequestModel().findAll({where: {status: "completed"}});
         } catch(e) {
             console.log("Error is:" +e);
         }

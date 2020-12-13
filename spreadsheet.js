@@ -104,7 +104,7 @@ function getShipNamesWithPrices(auth) {
     });
 }
 module.exports = {
-    getShipsWithPrice: function(auth=auth, shippings = "Vigilant") {
+    getShipsWithPrice: function(auth=auth) {
         const sheets = google.sheets({version: 'v4', auth});
         let spreadsheetId = '1VNUfGdSPF6dqvcFwFMP8iS_oajD5728JzufZ33UpA88';
         let ranges = [
@@ -117,6 +117,21 @@ module.exports = {
 
         ];
             return sheets.spreadsheets.values.batchGet({spreadsheetId, ranges});
+
+
+    },    getShipNames: function(auth=auth) {
+        const sheets = google.sheets({version: 'v4', auth});
+        let spreadsheetId = '1VNUfGdSPF6dqvcFwFMP8iS_oajD5728JzufZ33UpA88';
+        let ranges = [
+            'EVO1 Ship List!B12:B27', // frigates
+            'EVO1 Ship List!B30:B30', // destroyers
+            'EVO1 Ship List!B37:B61', // cruisers
+            'EVO1 Ship List!B70:B77', // battle cruisers
+            'EVO1 Ship List!B83:B87', // battle ships
+            'EVO1 Ship List!B92:B102', // industrials
+
+        ];
+        return sheets.spreadsheets.values.batchGet({spreadsheetId, ranges});
 
 
     }, getCorpPlayerAccount(auth) {
