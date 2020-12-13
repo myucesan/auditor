@@ -94,12 +94,13 @@ module.exports = {
         } else if (args[0] === "manage") {
             // check authorisation
             if (message.member.roles.cache.some(r => ["Auditor's Boss"].includes(r.name))) {
-                message.channel.send("**You are authorised**\n\n");
-                if (!isNaN(args[1])) {
+                let managedIds = args[1].split(',').map(id=> +id);
+                let allNumbers = managedIds.every(function(element) {return typeof element === 'number';})
+                if (allNumbers) {
                     // args[1] should be id and args 2 should be operation
                     let manageId = args[1];
-                    let manageArgumenet = args[2];
-                    if (manageArgumenet === "status") {
+                    let manageArgument = args[2];
+                    if (manageArgument === "status") {
                         let status = args[3];
                         switch (status.toLowerCase()) {
                             case "pending":
@@ -122,7 +123,16 @@ module.exports = {
                                 status = "Pending";
                                 break;
                         }
-                        await database.updateShipRequest(manageId, "status", status);
+                        managedIds.forEach(id => {
+                            database.updateShipRequest(id, "status", status)
+                        } );
+                    } else if (manageArgument == "notes") {
+                        let notes = args.slice(3, args.length).toString().replace(/,/g, ' ');
+                        console.log(notes);
+
+                        managedIds.forEach(id => {
+                            database.updateShipRequest(id, "notes", notes)
+                        } );
                     }
                 }
             } else {
@@ -167,11 +177,12 @@ module.exports = {
                 }
 
 
+
                 message.channel.send(`@${message.author.username}\nShip: ${args[0]}\nBlueprint: ${booleanStatus}\nPayment method: ${args[2]}`)
                 const authorId = message.author.id;
                 const authorUsername = message.author.username;
-                database.addShipRequest(args[0], args[1], authorUsername, authorId, args[2])
-                database.shipRequestModel().sync();
+                await database.addShipRequest(args[0], args[1], authorUsername, authorId, args[2])
+                await database.shipRequestModel().sync();
             }
 
 
