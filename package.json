@@ -1,0 +1,24 @@
+{
+  "name": "auditor",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cron": "^1.8.2",
+    "date-fns": "^2.16.1",
+    "date-fns-tz": "^1.0.12",
+    "discord.js": "^12.5.1",
+    "fuse.js": "^6.4.3",
+    "googleapis": "^66.0.0",
+    "js-levenshtein": "^1.1.6",
+    "mysql2": "^2.2.5",
+    "rxjs": "^6.6.3",
+    "sequelize": "^6.3.5"
+  }
+}
