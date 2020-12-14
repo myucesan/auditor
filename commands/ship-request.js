@@ -94,7 +94,7 @@ module.exports = {
 
             }
         }
-        else if (args[0] === "manage") {
+        else if (args[0].toLowerCase() === "manage") {
             // check authorisation
             if (message.member.roles.cache.some(r => ["Auditor's Boss"].includes(r.name))) {
                 let managedIds = args[1].split(',').map(id=> +id);
@@ -160,13 +160,25 @@ module.exports = {
 
                         managedIds.forEach(id => {
                             database.updateShipRequest(id, "notes", notes)
-                        } );
+                        });
                     }
                 }
             }
             else {
                 message.channel.send("**You are unauthorised**\n\n");
             }
+        } else if (args[0].toLowerCase() === "myorders") {
+
+            let myOrdersEmbed = new Discord.MessageEmbed()
+                .setColor('#0099ff')
+                .setTitle('Your (uncompleted) orders')
+                .setAuthor(message.author.username)
+            await database.getUserByShipRequestID("by_pilot", message.author.id).then(function (result) {
+                result.map(e => {
+                    myOrdersEmbed.addField(e.ship, e.status, true);
+
+                })}).catch(e => console.log(e));
+                message.author.send(myOrdersEmbed);
         } else {
             if (args.length !== 3) {
                 message.channel.send("Incorrect amount of arguments. Usage:\n !ship-request [Ship] BP(yes/no] Payment[credit/donate]\n!ship-request list\n!!ship-request-list complete")
@@ -184,11 +196,12 @@ module.exports = {
                 if (!(args[1].toLowerCase() === "no" || args[1].toLowerCase() === "n" || args[1].toLowerCase() === "yes" || args[1].toLowerCase() === "y")) {
                     message.channel.send(">>> Blueprint defaults to 'no' because of invalid input");
                     args[1] = false;
+                    booleanStatus = "No";
 
-                } else if (args[1] === "no" || args[1] === "y") {
+                } else if (args[1].toLowerCase() === "no" || args[1].toLowerCase() === "y") {
                     args[1] = false;
                     booleanStatus = "No";
-                } else if (args[1] === "yes" || args[1] === "y") {
+                } else if (args[1].toLowerCase() === "yes" || args[1].toLowerCase() === "y") {
                     args[1] = true;
                     booleanStatus = "Yes";
                 }

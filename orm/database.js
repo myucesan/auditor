@@ -118,12 +118,22 @@ module.exports = {
             }
         }
 
-     }, getUserByShipRequestID: async function(id) {
+     }, getUserByShipRequestID: async function(by = "srid",id) {
+        if (by === "by_pilot") {
+            try {
+                return await this.shipRequestModel().findAll({where: {pilot_id: id, [sequelize.Op.not]: {status : "Completed"}}});
+            } catch(e) {
+                console.log("Error is:" + e);
+            }
+        }
+        else if (by === "srid") {
             try {
                 return await this.shipRequestModel().findAll({where: {id: id}});
             } catch(e) {
                 console.log("Error is:" + e);
             }
+        }
+
     }
 }
 
