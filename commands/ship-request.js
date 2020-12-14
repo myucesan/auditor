@@ -4,6 +4,8 @@ const credentials = require('../credentials.json');
 const token = require('../token.json');
 const {google} = require('googleapis');
 const Fuse = require('fuse.js')
+const Discord = require('discord.js');
+const { zonedTimeToUtc, utcToZonedTime, format, setHours} = require('date-fns-tz')
 
 module.exports = {
     name: 'ship-request',
@@ -44,7 +46,8 @@ module.exports = {
                 "BP : Yes / No\n" +
                 "Payment: Corp Credit / Isks (donation) / Additional notes");
 
-        } else if (args[0] === "list") {
+        }
+        else if (args[0] === "list") {
             let msg = ``;
             let statusEmoji = '';
             if (args[1] === undefined) {args[1] = "undefined"}
@@ -91,7 +94,8 @@ module.exports = {
                 message.channel.send(msg);
 
             }
-        } else if (args[0] === "manage") {
+        }
+        else if (args[0].toLowerCase() === "manage") {
             // check authorisation
             if (message.member.roles.cache.some(r => ["Auditor's Boss"].includes(r.name))) {
                 let managedIds = args[1].split(',').map(id=> +id);
@@ -123,6 +127,31 @@ module.exports = {
                                 status = "Pending";
                                 break;
                         }
+
+                        managedIds.forEach(id => {
+                                let contractedOrder = new Discord.MessageEmbed()
+                                    .setColor('#0099ff')
+                                    .setTitle('Congratulations, your order has been contracted!')
+                                    .setAuthor('Semarin')
+                                    .setImage("https://cdn.discordapp.com/attachments/766158782286921738/787414543545532426/image0.jpg")
+                            database.getUserByShipRequestID(id).then(function (result) {
+
+
+                                result.map(e => {
+                                    const user = message.guild.members.cache.get(e.pilot_id);
+                                    contractedOrder = contractedOrder
+                                        .setFooter(`Ordered at: ${e.createdAt}`)
+                                        .addField("Ship", e.ship, true)
+                                        .addField("Price", 'Contact Industry', true)
+                                        .addField("Payment method:", e.payment, true)
+                                    user.send(contractedOrder);
+                                });
+
+                            }).catch(function (error) {
+                                console.log(error);
+                            })
+                        }
+                        )
                         managedIds.forEach(id => {
                             database.updateShipRequest(id, "status", status)
                         } );
@@ -132,13 +161,25 @@ module.exports = {
 
                         managedIds.forEach(id => {
                             database.updateShipRequest(id, "notes", notes)
-                        } );
+                        });
                     }
                 }
-            } else {
-                message.channel.send("**You are unauthorised**\n\n");
-
             }
+            else {
+                message.channel.send("**You are unauthorised**\n\n");
+            }
+        } else if (args[0].toLowerCase() === "myorders") {
+
+            let myOrdersEmbed = new Discord.MessageEmbed()
+                .setColor('#0099ff')
+                .setTitle('Your (uncompleted) orders')
+                .setAuthor(message.author.username)
+            await database.getUserByShipRequestID("by_pilot", message.author.id).then(function (result) {
+                result.map(e => {
+                    myOrdersEmbed.addField(e.ship, e.status, true);
+
+                })}).catch(e => console.log(e));
+                message.author.send(myOrdersEmbed);
         } else {
             if (args.length !== 3) {
                 message.channel.send("Incorrect amount of arguments. Usage:\n !ship-request [Ship] BP(yes/no] Payment[credit/donate]\n!ship-request list\n!!ship-request-list complete")
@@ -156,11 +197,12 @@ module.exports = {
                 if (!(args[1].toLowerCase() === "no" || args[1].toLowerCase() === "n" || args[1].toLowerCase() === "yes" || args[1].toLowerCase() === "y")) {
                     message.channel.send(">>> Blueprint defaults to 'no' because of invalid input");
                     args[1] = false;
+                    booleanStatus = "No";
 
-                } else if (args[1] === "no" || args[1] === "y") {
+                } else if (args[1].toLowerCase() === "no" || args[1].toLowerCase() === "y") {
                     args[1] = false;
                     booleanStatus = "No";
-                } else if (args[1] === "yes" || args[1] === "y") {
+                } else if (args[1].toLowerCase() === "yes" || args[1].toLowerCase() === "y") {
                     args[1] = true;
                     booleanStatus = "Yes";
                 }
@@ -190,3 +232,4 @@ module.exports = {
         }
     }
 };
+
