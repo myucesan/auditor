@@ -48,7 +48,8 @@ module.exports = {
 
         }
         else if (args[0] === "list") {
-            let msg = ``;
+            if (message.member.roles.cache.some(r => ["Auditor's Boss"].includes(r.name))) {
+                let msg = ``;
             let statusEmoji = '';
             if (args[1] === undefined) {args[1] = "undefined"}
             if (args[1].toString().toLowerCase() === "completed") {
@@ -94,7 +95,7 @@ module.exports = {
                 message.channel.send(msg);
 
             }
-        }
+        }}
         else if (args[0].toLowerCase() === "manage") {
             // check authorisation
             if (message.member.roles.cache.some(r => ["Auditor's Boss"].includes(r.name))) {
