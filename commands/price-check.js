@@ -2,6 +2,8 @@ const ss = require("../spreadsheet");
 const credentials = require('../credentials.json');
 const token = require('../token.json');
 const {google} = require('googleapis');
+const Fuse = require('fuse.js')
+
 
 module.exports = {
 
@@ -84,7 +86,15 @@ module.exports = {
             }
 
         } else {
-            ss.getShipsWithPrice(oAuth2Client).then(result => {
+
+            const fuse = new Fuse(shipNames, {
+                keys: ['name']
+            })
+            let shipNameInput = args.slice(0, args.length).toString().replace(/,/g, ' ');
+            let search = fuse.search(shipNameInput);
+            search = search[0].item.name;
+
+            await ss.getShipsWithPrice(oAuth2Client).then(result => {
                 console.log(`${result.data.valueRanges.length} ranges retrieved.`);
                 const rows = result.data.valueRanges;
                 if (rows.length) {
@@ -92,13 +102,8 @@ module.exports = {
                         row.values.forEach(ship => {
                             if (ship.length !== 0) {
                                 let shipName = ship[0].replace(/[*^]+/, '');
-                                if (shipName === (args[0].charAt(0).toUpperCase() + args[0].substring(1))) {
-                                    for (let s of ship) {
-                                        if (s === null) {
-                                            console.log("LEEG")
-                                        }
-                                    }
-                                    message.channel.send(`Market price: ${ship[1]}\nBP + Hull Corp: ${ship[2]}\nCorp Hull only:${ship[3]}\nBP cost: ${ship[4]}`);
+                                if (shipName === search) {
+                                    message.channel.send(`Ship: ${search}\nMarket price: ${ship[1]}\nBP + Hull Corp: ${ship[2]}\nCorp Hull only:${ship[3]}\nBP cost: ${ship[4]}`);
                                 }
                             }
                         });
