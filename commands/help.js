@@ -60,10 +60,25 @@ module.exports = {
                     message.member.send(normalUser)
             }
 
+        } else if (args[0].toLowerCase() === "price-check" || args[0].toLowerCase() === "pc") {
+            const priceCheckHelp = new Discord.MessageEmbed()
+                .setColor('#0099ff')
+                .setTitle('Auditor Help | Price Check')
+                .setDescription('Check the price of a ship you can buy off the corp.')
+                .addField("Command", "!!price-check", true)
+                .addField("Alias(es)", "!!pc", true)
+                .addField("Show all ship names", '!!pc list')
+                .addField("Show all ships of specific type", "!!pc list [frigates/destroyers/cruisers/battlecruisers/battleships/industrials")
+                .addField("To ask price of ship", "!!pc [Shipname] (exact as in price list)")
+                .setTimestamp()
+                .setFooter('Developed by Semarin');
+            message.member.send(priceCheckHelp)
         }
+    }
 
 
 
 
-    },
+
+    ,
 };

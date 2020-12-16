@@ -36,15 +36,59 @@ module.exports = {
             console.log(error);
         })
 
-        if (args.length !== 1) {
-            message.channel.send(`Incorrect usage: format:\n!price-check [ship] \nEx:!price-check Vigilant`);
+        let shipNameListMessageFrigates = ""; // 16
+        let shipNameListMessageDestroyers = ""; // 1
+        let shipNameListMessageCruisers = ""; // 24
+        let shipNameListMessageBattleCruisers = ""; // 8
+        let shipNameListMessageBattleShips = ""; // 5
+        let shipNameListMessageIndustrials = ""; // 3
+        let shipNameListMessage = []; // all
+
+
+
+
+        if (args[0].toLowerCase() === "list") {
+            let i = 0;
+            shipNames.forEach(e => {
+                i += 1;
+                if (i <= 16) {
+                    shipNameListMessageFrigates += e.name + "\n";
+                } else if (i > 16 && i < 18) {
+                    shipNameListMessageDestroyers += e.name + "\n";
+                } else if (i >= 18 && i < 41) {
+                    shipNameListMessageCruisers += e.name + "\n";
+                } else if (i >= 41 && i <= 48) {
+                    shipNameListMessageBattleCruisers += e.name + "\n";
+                } else if (i > 48 && i < 54) {
+                    shipNameListMessageBattleShips += e.name + "\n";
+                } else if (i >= 54 && i < 57) {
+                    shipNameListMessageIndustrials += e.name + "\n";
+                }
+                shipNameListMessage += e.name + "\n"
+            })
+
+            if (args[1] === undefined) {
+                message.channel.send(shipNameListMessage);
+            } else if (args[1].toLowerCase() === "frigates") {
+                message.channel.send(shipNameListMessageFrigates);
+            } else if (args[1].toLowerCase() === "destroyers") {
+                message.channel.send(shipNameListMessageDestroyers);
+            } else if (args[1].toLowerCase() === "cruisers") {
+                message.channel.send(shipNameListMessageCruisers);
+            } else if (args[1].toLowerCase() === "battlecruisers") {
+                message.channel.send(shipNameListMessageBattleCruisers);
+            } else if (args[1].toLowerCase() === "battleships") {
+                message.channel.send(shipNameListMessageBattleCruisers);
+            } else if (args[1].toLowerCase() === "industrials") {
+                message.channel.send(shipNameListMessageIndustrials);
+            }
+
         } else {
             ss.getShipsWithPrice(oAuth2Client).then(result => {
                 console.log(`${result.data.valueRanges.length} ranges retrieved.`);
                 const rows = result.data.valueRanges;
                 if (rows.length) {
                     rows.map((row => {
-                        // console.log("----------------");
                         row.values.forEach(ship => {
                             if (ship.length !== 0) {
                                 let shipName = ship[0].replace(/[*^]+/, '');
