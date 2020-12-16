@@ -178,6 +178,8 @@ module.exports = {
             await database.getUserByShipRequestID("by_pilot", message.author.id).then(function (result) {
                 result.map(e => {
                     myOrdersEmbed.addField(e.ship, e.status, true);
+                    myOrdersEmbed.addField("Notes:", e.notes, true);
+                    myOrdersEmbed.addField("\u200B", "\u200B", true)
 
                 })}).catch(e => console.log(e));
                 message.author.send(myOrdersEmbed);
@@ -199,6 +201,7 @@ module.exports = {
                     message.channel.send(">>> Blueprint defaults to 'no' because of invalid input");
                     args[1] = false;
                     booleanStatus = "No";
+
 
                 } else if (args[1].toLowerCase() === "no" || args[1].toLowerCase() === "y") {
                     args[1] = false;

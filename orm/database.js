@@ -45,6 +45,7 @@ module.exports = {
             },
             notes: {
                 type: Sequelize.STRING,
+                defaultValue:"none",
                 allowNull: true
             }
         });

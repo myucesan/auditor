@@ -20,12 +20,18 @@ const cooldowns = new Discord.Collection();
 // cron jobs
 async function dailyShipRequestOrders() {
     let channel = client.channels.cache.get("786281834127818842");
-    let msg = '**Todays orders up until the time of this announcement**\n\n';
-    channel.send(msg);
+
+    const dailyOrderUpdate = new Discord.MessageEmbed()
+        .setColor('#0099ff')
+        .setTitle('Todays orders up until the time of this announcement')
+        .setDescription('Daily orders up until UTC16:00 today.')
+        .setTimestamp()
+        .setFooter('Thank you for using this service!');
 
     await database.getTodaysShipRequests().then(result => {
         result.map(e => {
-            channel.send(`ID: ${e.id} | @${e.pilot} | Ship: ${e.ship} | Blueprint: ${e.blueprint} | Payment: ${e.payment}| Status: ${e.status}\n`);
+            dailyOrderUpdate.addField("Ship", e.ship, true)
+            channel.send(dailyOrderUpdate);
         })
 
     })
