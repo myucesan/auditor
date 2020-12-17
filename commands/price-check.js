@@ -104,19 +104,22 @@ module.exports = {
                             if (ship.length !== 0) {
                                 let shipName = ship[0].replace(/[*^]+/, '');
                                 if (shipName === search) {
-                                    const priceCheckEmbed = new Discord.MessageEmbed()
-                                        .setColor('#0099ff')
-                                        .setTitle(`Price Check | ${search}`)
-                                        .addField("Ship", search, true)
-                                        .addField('Market price', ship[1], true)
-                                        .addField("BP + Hull Corp", ship[2], true)
-                                        .addField("Corp Hull Only", ship[3], true)
-                                        .addField("Blueprint Only", ship[4] + " million", true)
-                                        .addField("Corp discount", String(Math.round(((parseFloat(ship[1].replace(",", ".")) - parseFloat(ship[2].replace(",", "."))) + Number.EPSILON) * 100) / 100) + " million", true)
-                                        .setTimestamp()
+                                    try {
+                                        const priceCheckEmbed = new Discord.MessageEmbed()
+                                            .setColor('#0099ff')
+                                            .setTitle(`Price Check | ${search}`)
+                                            .addField("Ship", search, true)
+                                            .addField('Market price', ship[1], true)
+                                            .addField("BP + Hull Corp", ship[2], true)
+                                            .addField("Corp Hull Only", ship[3], true)
+                                            .addField("Blueprint Only", ship[4] + " million", true)
+                                            .addField("Corp discount", String(Math.round(((parseFloat(ship[1].replace(",", ".")) - parseFloat(ship[2].replace(",", "."))) + Number.EPSILON) * 100) / 100) + " million", true)
+                                            .setTimestamp()
 
-                                    message.channel.send(priceCheckEmbed);
-
+                                        message.channel.send(priceCheckEmbed);
+                                    } catch (e) {
+                                        message.channel.send("All prices are not defined yet for this ship.");
+                                    }
                                     // message.channel.send(`Ship: ${search}\nMarket price: ${ship[1]}\nBP + Hull Corp: ${ship[2]}\nCorp Hull only:${ship[3]}\nBP cost: ${ship[4]}`);
                                 }
                             }
