@@ -29,6 +29,11 @@ module.exports = {
                     // console.log("----------------");
                     row.values.forEach(player => {
                         str += `**Member: ${player[0]}** | Position: ${player[1]} | Account Balance: ${player[2]} | Notes: ${player[3]}\n`
+
+                        if (str.length > 1900) {
+                            message.channel.send(str);
+                            str = ""
+                        }
                     });
                 }))
                 message.channel.send(str);
