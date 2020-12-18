@@ -31,8 +31,8 @@ async function dailyShipRequestOrders() {
     await database.getTodaysShipRequests().then(result => {
         result.map(e => {
             dailyOrderUpdate.addField("Ship", e.ship, true)
-            channel.send(dailyOrderUpdate);
         })
+        channel.send(dailyOrderUpdate);
 
     })
 
