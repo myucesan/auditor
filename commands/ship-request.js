@@ -106,7 +106,7 @@ module.exports = {
             if (message.member.roles.cache.some(r => ["Auditor's Boss"].includes(r.name))) {
                 let managedIds = args[1].split(',').map(id=> +id);
                 if (managedIds.length > 10) {
-                    message.channel.send("This command is capped to 10 id's due to technical issues it gives.");
+                    message.channel.send("This command is capped to 10 id's. '");
                     return;
                 }
                 let allNumbers = managedIds.every(function(element) {return typeof element === 'number';})
