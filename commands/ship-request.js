@@ -105,6 +105,10 @@ module.exports = {
             // check authorisation
             if (message.member.roles.cache.some(r => ["Auditor's Boss"].includes(r.name))) {
                 let managedIds = args[1].split(',').map(id=> +id);
+                if (managedIds.length > 10) {
+                    message.channel.send("This command is capped to 10 id's due to technical issues it gives.");
+                    return;
+                }
                 let allNumbers = managedIds.every(function(element) {return typeof element === 'number';})
                 if (allNumbers) {
                     // args[1] should be id and args 2 should be operation
