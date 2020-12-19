@@ -23,9 +23,17 @@ module.exports = {
                 defaultValue: false,
                 allowNull: false
             },
-            price: {
+            market_price: {
                 type: Sequelize.FLOAT,
-                allowNull : true
+                allowNull : false
+            },
+            blueprint_hull_corporation_price: {
+                type: Sequelize.FLOAT,
+                allowNull: false
+            },
+            corporation_hull_only_price: {
+                type: Sequelize.FLOAT,
+                allowNull: false
             },
             pilot: {
                 type: Sequelize.STRING,
@@ -52,18 +60,21 @@ module.exports = {
 
         return shipRequestsModel;
     },
-    addShipRequest: async function (srShip, srBlueprint, srPilot, srPilot_id, srPayment) {
-        console.log(123)
+    addShipRequest: async function (srShip, srBlueprint, market_price = 0, blueprint_hull_corporation_price = 0, corporation_hull_only_price = 0, srPilot, srPilot_id, srPayment) {
         try {
             const request = await this.shipRequestModel().create({
                 ship: srShip,
                 blueprint: srBlueprint,
+                market_price: market_price,
+                blueprint_hull_corporation_price: blueprint_hull_corporation_price,
+                corporation_hull_only_price: corporation_hull_only_price,
                 pilot: srPilot,
                 pilot_id: srPilot_id,
                 payment: srPayment
             });
         } catch (e) {
-            return `Something went wrong with adding a ship request, try again!\n Error: ${e}`
+            console.log("fail")
+            console.log(`Something went wrong with adding a ship request, try again!\n Error: ${e}`)
         }
 
     },
@@ -120,7 +131,7 @@ module.exports = {
             }
         }
 
-     }, getUserByShipRequestID: async function(by = "srid",id) {
+     }, getUserByShipRequestID: async function(by = "srid", id) {
         if (by === "by_pilot") {
             try {
                 return await this.shipRequestModel().findAll({where: {pilot_id: id, [sequelize.Op.not]: {status : "Completed"}}});

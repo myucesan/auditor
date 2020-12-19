@@ -135,7 +135,7 @@ module.exports = {
                                     .setTitle('Congratulations, your order has been contracted!')
                                     .setAuthor('Semarin')
                                     .setImage("https://cdn.discordapp.com/attachments/766158782286921738/787414543545532426/image0.jpg")
-                            database.getUserByShipRequestID(id).then(function (result) {
+                            database.getUserByShipRequestID("srid", id).then(function (result) {
 
 
                                 result.map(e => {
@@ -228,7 +228,8 @@ module.exports = {
                 message.channel.send(`@${message.author.username}\nShip: ${args[0]}\nBlueprint: ${booleanStatus}\nPayment method: ${args[2]}`)
                 const authorId = message.author.id;
                 const authorUsername = message.author.username;
-                await database.addShipRequest(args[0], args[1], authorUsername, authorId, args[2])
+                console.log("Adding ship request")
+                await database.addShipRequest(args[0], args[1], 0, 0, 0, authorUsername, authorId, args[2])
                 await database.shipRequestModel().sync();
             }
 
