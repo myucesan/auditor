@@ -57,6 +57,11 @@ module.exports = {
 
                     console.log(result.map(e => {
                         msg += `\`\`\`✅ ID: ${e.id} | @${e.pilot} | Ship: ${e.ship} | Blueprint: ${e.blueprint} | Payment: ${e.payment}| Status: ${e.status}\n\`\`\``;
+
+                        if (msg.length > 1900) {
+                            message.channel.send(msg);
+                            msg = ``;
+                        }
                     }));
                     message.channel.send(msg);
 
