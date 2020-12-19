@@ -12,6 +12,8 @@ module.exports = {
     description: 'Puts in a ship request.',
     aliases: ['sr'],
     async execute(message, args) {
+
+
         // args: shipname amount bp:yes/no payment:cc/donate/additional notes
         message.react('👀');
         const {client_secret, client_id, redirect_uris} = credentials.installed;
@@ -69,6 +71,9 @@ module.exports = {
                     console.log(error);
                 })
             } else {
+                let pendingOrders = ``;
+                let inproductionOrders = ``;
+                let contractedOrders = ``;
 
                 await database.getOngoingShipRequests().then(function (result) {
 
@@ -76,12 +81,15 @@ module.exports = {
                         switch (e.status.toLowerCase()) {
                             case "pending":
                                 statusEmoji = '⚒️';
+                                pendingOrders += `${statusEmoji}\`${e.id}\` - @${e.pilot} - ${e.ship} | ${e.payment} | _${e.status}_ | ${e.blueprint ? '**BP**' : ''}\n`;
                                 break;
                             case "in production":
                                 statusEmoji = '⏳';
+                                inproductionOrders += `${statusEmoji}\`${e.id}\` - @${e.pilot} - ${e.ship} | ${e.payment} | _${e.status}_ | ${e.blueprint ? '**BP**' : ''}\n`;
                                 break;
                             case "contracted":
                                 statusEmoji = '📧';
+                                contractedOrders += `${statusEmoji}\`${e.id}\` - @${e.pilot} - ${e.ship} | ${e.payment} | _${e.status}_ | ${e.blueprint ? '**BP**' : ''}\n`;
                                 break;
                             case "completed":
                                 statusEmoji = '✅';
@@ -90,14 +98,25 @@ module.exports = {
                                 statusEmoji = '🚫';
                                 break;
                         }
-                        msg += `${statusEmoji}\`${e.id}\` - @${e.pilot} - ${e.ship} | ${e.payment} | _${e.status}_ | ${e.blueprint ? '**BP**' : ''}\n`;
+                        msg = pendingOrders + inproductionOrders + contractedOrders;
                     });
 
 
                 }).catch(function (error) {
                     console.log(error);
+
                 })
-                message.channel.send(msg);
+                let size;
+                let splitted = "";
+                if (msg.length > 1900) {
+                    if (msg == null) return [];
+                    msg = String(msg);
+                    size = ~~1900;
+                    splitted = size > 0 ? msg.match(new RegExp('.{1,' + size + '}', 'g')) : [msg];
+                    splitted.forEach(e => message.channel.send(e));
+                } else {
+                    message.channel.send(msg);
+                }
 
             }
         }}
@@ -145,7 +164,6 @@ module.exports = {
                                     .setAuthor('Semarin')
                                     .setImage("https://cdn.discordapp.com/attachments/766158782286921738/787414543545532426/image0.jpg")
                             database.getUserByShipRequestID("srid", id).then(function (result) {
-
 
                                 result.map(e => {
                                     const user = message.guild.members.cache.get(e.pilot_id);
@@ -223,6 +241,8 @@ module.exports = {
                 if (!(args[2].toLowerCase() === "credit" || args[2].toLowerCase() === "donate" || args[2].toLowerCase() === "srp")) {
                     message.channel.send(">>> Payment method defaults to 'donate' because of invalid input");
                     args[2] = "Donate";
+                } else if (args[2].toLowerCase() === "srp") {
+                    args[2] = args[2].toUpperCase()
                 } else {
                     args[2] = args[2][0].toUpperCase() + args[2].substring(1)
                 }
@@ -232,13 +252,37 @@ module.exports = {
                     message.channel.send(">>> The ship name input has multiple matches, I chose the best one for you but in case it's wrong ask the industry officers to cancel it.");
                 }
 
+                let marketPrice = 0;
+                let bpHullCorp = 0;
+                let hullCorp = 0
+                await ss.getShipsWithPrice(oAuth2Client).then(result => {
+                    const rows = result.data.valueRanges;
+
+                    if (rows.length) {
+                        rows.map(row => {
+                            row.values.forEach(ship => {
+                                if (ship.length !== 0) {
+                                    let shipName = ship[0].replace(/[*^]+/, '');
+
+                                    if (shipName === args[0]) {
+                                        marketPrice = parseFloat(ship[1].replace(",", "."));
+                                        bpHullCorp = parseFloat(ship[2].replace(",", "."));
+                                        hullCorp = parseFloat(ship[3].replace(",", "."));
+
+                                    }
+                                }
+                            })
+                        })
+                    }
+                })
+
 
 
                 message.channel.send(`@${message.author.username}\nShip: ${args[0]}\nBlueprint: ${booleanStatus}\nPayment method: ${args[2]}`)
                 const authorId = message.author.id;
                 const authorUsername = message.author.username;
                 console.log("Adding ship request")
-                await database.addShipRequest(args[0], args[1], 0, 0, 0, authorUsername, authorId, args[2])
+                await database.addShipRequest(args[0], args[1], marketPrice, bpHullCorp, hullCorp, authorUsername, authorId, args[2])
                 await database.shipRequestModel().sync();
             }
 
